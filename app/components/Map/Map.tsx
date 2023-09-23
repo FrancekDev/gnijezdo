@@ -1,8 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
-import { useLoadScript } from '@react-google-maps/api';
 import {
   GoogleMap,
   Marker,
@@ -10,7 +9,9 @@ import {
   Circle,
   MarkerClusterer,
   useJsApiLoader,
+  LoadScriptProps,
 } from '@react-google-maps/api';
+
 import Places from './Places';
 import Distance from './Distance';
 
@@ -19,7 +20,7 @@ type LatLngLiteral = google.maps.LatLngLiteral;
 type DirectionsResult = google.maps.DirectionsResult;
 type MapOptions = google.maps.MapOptions;
 
-const places: Array<string> = ['places'];
+const libraries: LoadScriptProps['libraries'] = ['places'];
 
 const Map = () => {
   const googleMapsApiKey: string =
@@ -27,7 +28,7 @@ const Map = () => {
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: googleMapsApiKey,
-    libraries: places,
+    libraries: libraries,
   });
 
   const [location, setLocation] = useState<LatLngLiteral>();
@@ -72,7 +73,10 @@ const Map = () => {
     );
   };
 
-  if (!isLoaded) return <div>Loading...</div>;
+  if (!isLoaded)
+    return (
+      <div className='h-1vh flex items-center justify-center'>Loading...</div>
+    );
 
   return (
     <div className='container'>
@@ -84,7 +88,7 @@ const Map = () => {
           }}
         />
 
-        {!location && <p>Enter the adress of your location.</p>}
+        {/* {!location && <p>Upišite željenu lokaciju.</p>} */}
         {directions && <Distance leg={directions.routes[0].legs[0]} />}
       </div>
       <div className='map'>
@@ -113,10 +117,10 @@ const Map = () => {
             <>
               <Marker
                 position={location}
-                icon='https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+                // icon='https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
               />
 
-              <MarkerClusterer>
+              {/* <MarkerClusterer>
                 {(clusterer) => (
                   <div>
                     {houses.map((house) => (
@@ -135,7 +139,7 @@ const Map = () => {
 
               <Circle center={location} radius={3000} options={closeOptions} />
               <Circle center={location} radius={6000} options={middleOptions} />
-              <Circle center={location} radius={12000} options={farOptions} />
+              <Circle center={location} radius={12000} options={farOptions} /> */}
             </>
           )}
         </GoogleMap>
