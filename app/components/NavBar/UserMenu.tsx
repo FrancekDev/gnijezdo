@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import MenuItem from './MenuItem';
 import { useRouter } from 'next/navigation';
 import Avatar from '../Avatar';
+import useRegisterModal from '@/app/hooks/useRegisterModal';
 
 interface UserMenuProps {
   currentUser?: string;
@@ -13,9 +14,11 @@ interface UserMenuProps {
 
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const router = useRouter();
+  const registerModal = useRegisterModal();
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     let handler = (e: any) => {
@@ -89,18 +92,38 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
         '
         >
           <div className='flex cursor-pointer flex-col'>
-            <MenuItem
-              onClick={() => {
-                setIsOpen(false);
-              }}
-              label='My trips'
-            />
-            <MenuItem
-              onClick={() => {
-                setIsOpen(false);
-              }}
-              label='Oglasi svoju nektetninu'
-            />
+            {currentUser ? (
+              <>
+                <MenuItem
+                  onClick={() => {
+                    setIsOpen(false);
+                  }}
+                  label='Favoriti'
+                />
+                <MenuItem
+                  onClick={() => {
+                    setIsOpen(false);
+                  }}
+                  label='Moje nekretnine'
+                />
+                <MenuItem
+                  onClick={() => {
+                    setIsOpen(false);
+                  }}
+                  label='Oglasi svoju nektetninu'
+                />
+              </>
+            ) : (
+              <>
+                <MenuItem
+                  onClick={() => {
+                    setIsOpen(false);
+                  }}
+                  label='Login'
+                />
+                <MenuItem onClick={registerModal.onOpen} label='Sign Up' />
+              </>
+            )}
           </div>
         </div>
       )}

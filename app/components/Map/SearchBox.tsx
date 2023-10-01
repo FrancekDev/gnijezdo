@@ -6,11 +6,11 @@ import usePlacesAutocomplete, {
 import * as Ariakit from '@ariakit/react';
 import { Autocomplete } from '@react-google-maps/api';
 
-type PlacesProps = {
+type SearchBoxProps = {
   setLocation: (position: google.maps.LatLngLiteral) => void;
 };
 
-export default function Places({ setLocation }: PlacesProps) {
+export default function SearchBox({ setLocation }: SearchBoxProps) {
   const {
     ready,
     value,

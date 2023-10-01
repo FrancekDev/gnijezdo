@@ -9,10 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        blu: '#0F4D86',
-        bei: '#FFF5DC',
-        gra: '#F7F7F3',
+        bei: '#FAF2DB',
+        blu: '#155287',
+        secBlu: '#3b5dad',
         oli: '#9CB295',
+        secOli: '#b1c8a7',
+        del: '#ed7575',
+        secDel: '#ff4646',
+        gra: '#E6E4E0',
       },
     },
   },

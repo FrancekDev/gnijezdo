@@ -12,7 +12,7 @@ import {
   LoadScriptProps,
 } from '@react-google-maps/api';
 
-import Places from './Places';
+import Places from './SearchBox';
 import Distance from './Distance';
 
 //Shorthands for

@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* html,
+html,
 body,
 :root {
   height: 100%;
-} */
+}
 
 a {
   color: inherit;
@@ -18,17 +18,17 @@ a {
 }
 
 .container {
-  /* position: relative;
-  top: 86px; */
+  position: relative;
+  top: 86px;
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 86px);
 }
 
 .controls {
-  width: 20%;
+  width: 30%;
   padding: 1rem;
-  background: #555d6c;
-  color: #fff;
+  background: #fff5dc;
+  color: #0f4d86;
 }
 
 .controls input {
@@ -37,12 +37,11 @@ a {
 
 .map-container {
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 86px);
 }
 
 .map {
-  width: 80%;
-  height: 100vh;
+  width: 70%;
 }
 
 .highlight {
