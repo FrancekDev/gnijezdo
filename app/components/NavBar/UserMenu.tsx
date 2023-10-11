@@ -7,6 +7,7 @@ import MenuItem from './MenuItem';
 import { useRouter } from 'next/navigation';
 import Avatar from '../Avatar';
 import useRegisterModal from '@/app/hooks/useRegisterModal';
+import Button from '../Button';
 
 interface UserMenuProps {
   currentUser?: string;
@@ -38,17 +39,30 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
     <div className='realtive' ref={menuRef}>
       <div
         className='
-    flex
-    flex-row
-    items-center
-    gap-3
-    '
+        flex
+        flex-row
+        items-center
+        justify-end
+        gap-3
+        '
       >
-        <div
-          onClick={() => {
-            setIsOpen(!isOpen);
-          }}
-          className={`
+        {true ? (
+          <div className='flex w-64 gap-4'>
+            <Button small label='Sign In' onClick={registerModal.onOpen} />
+            <Button
+              small
+              onClick={() => {
+                setIsOpen(false);
+              }}
+              label='Login'
+            />
+          </div>
+        ) : (
+          <div
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}
+            className={`
           flex
           cursor-pointer
           flex-row
@@ -63,18 +77,19 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
           hover:shadow-md
           md:px-2
           md:py-1`}
-        >
-          <AiOutlineMenu className='text-blu' />
-          <div
-            className='
+          >
+            <AiOutlineMenu className='text-blu' />
+            <div
+              className='
             hidden
             md:block
           '
-          >
-            {/* <Avatar src={currentUser?.image} /> */}
-            <Avatar src={'/images/avatar.jpg'} />
+            >
+              {/* <Avatar src={currentUser?.image} /> */}
+              <Avatar src={'/images/avatar.jpg'} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
       {isOpen && (
         <div
@@ -92,38 +107,24 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
         '
         >
           <div className='flex cursor-pointer flex-col'>
-            {currentUser ? (
-              <>
-                <MenuItem
-                  onClick={() => {
-                    setIsOpen(false);
-                  }}
-                  label='Favoriti'
-                />
-                <MenuItem
-                  onClick={() => {
-                    setIsOpen(false);
-                  }}
-                  label='Moje nekretnine'
-                />
-                <MenuItem
-                  onClick={() => {
-                    setIsOpen(false);
-                  }}
-                  label='Oglasi svoju nektetninu'
-                />
-              </>
-            ) : (
-              <>
-                <MenuItem
-                  onClick={() => {
-                    setIsOpen(false);
-                  }}
-                  label='Login'
-                />
-                <MenuItem onClick={registerModal.onOpen} label='Sign Up' />
-              </>
-            )}
+            <MenuItem
+              onClick={() => {
+                setIsOpen(false);
+              }}
+              label='Favoriti'
+            />
+            <MenuItem
+              onClick={() => {
+                setIsOpen(false);
+              }}
+              label='Moje nekretnine'
+            />
+            <MenuItem
+              onClick={() => {
+                setIsOpen(false);
+              }}
+              label='Oglasi svoju nektetninu'
+            />
           </div>
         </div>
       )}

@@ -104,6 +104,7 @@ const RegisterModal = () => {
         outline
         label='Nastavite sa Google računom'
         icon={FcGoogle}
+        onClick={() => {}}
         // onClick={() => signIn('google')}
       />
       <div
