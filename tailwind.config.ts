@@ -10,6 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         bei: '#FAF2DB',
+        beiBlur: '#faf2dba1',
         blu: '#155287',
         secBlu: '#3b5dad',
         oli: '#9CB295',

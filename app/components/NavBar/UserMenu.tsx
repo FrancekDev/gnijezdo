@@ -1,13 +1,19 @@
 'use client';
 
 import { AiOutlineMenu } from 'react-icons/ai';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import MenuItem from './MenuItem';
-import { useRouter } from 'next/navigation';
-import Avatar from '../Avatar';
-import useRegisterModal from '@/app/hooks/useRegisterModal';
 import Button from '../Button';
+import Avatar from '../Avatar';
+// import useRegisterModal from '@/app/hooks/useRegisterModal';
+import toast from 'react-hot-toast';
+
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import useAuthModal from '@/hooks/useAuthModal';
+import { useUser } from '@/hooks/useUser';
 
 interface UserMenuProps {
   currentUser?: string;
@@ -15,9 +21,25 @@ interface UserMenuProps {
 
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const router = useRouter();
-  const registerModal = useRegisterModal();
-
   const [isOpen, setIsOpen] = useState(false);
+  const authModal = useAuthModal();
+
+  const supabaseClent = useSupabaseClient();
+  const { user } = useUser();
+
+  const handleLogout = async () => {
+    const { error } = await supabaseClent.auth.signOut();
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success('Logged out!');
+    }
+
+    router.refresh();
+  };
+
+  // const registerModal = useRegisterModal();
 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -46,24 +68,16 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
         gap-3
         '
       >
-        {true ? (
-          <div className='flex w-64 gap-4'>
-            <Button small label='Sign In' onClick={registerModal.onOpen} />
-            <Button
-              small
+        {user ? (
+          <div className='flex w-44 shrink-0 items-center gap-x-4'>
+            <Button small label='Odjavi se' onClick={handleLogout} />
+            <div
               onClick={() => {
-                setIsOpen(false);
+                setIsOpen(!isOpen);
               }}
-              label='Login'
-            />
-          </div>
-        ) : (
-          <div
-            onClick={() => {
-              setIsOpen(!isOpen);
-            }}
-            className={`
+              className={`
           flex
+          shrink-0
           cursor-pointer
           flex-row
           items-center
@@ -77,17 +91,22 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
           hover:shadow-md
           md:px-2
           md:py-1`}
-          >
-            <AiOutlineMenu className='text-blu' />
-            <div
-              className='
+            >
+              <AiOutlineMenu className='text-blu' />
+              <div
+                className='
             hidden
             md:block
           '
-            >
-              {/* <Avatar src={currentUser?.image} /> */}
-              <Avatar src={'/images/avatar.jpg'} />
+              >
+                {/* <Avatar src={currentUser?.image} /> */}
+                <Avatar src={'/images/avatar.jpg'} />
+              </div>
             </div>
+          </div>
+        ) : (
+          <div className='flex w-20 gap-4'>
+            <Button small label='Prijavi se' onClick={authModal.onOpen} />
           </div>
         )}
       </div>

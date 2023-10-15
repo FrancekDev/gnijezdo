@@ -8,6 +8,7 @@ import RegisterModal from './components/Modals/RegisterModal';
 import ToasterProvider from './providers/ToasterProvider';
 import SupabaseProvider from '@/providers/SupabaseProvider';
 import UserProvider from '@/providers/UserProvider';
+import ModalProvider from './providers/ModalProvider';
 
 const fontSecondary = Arapey({ subsets: ['latin'], weight: ['400'] });
 const fontPrimary = Manrope({ subsets: ['latin'] });
@@ -28,6 +29,7 @@ export default function RootLayout({
         <ToasterProvider />
         <SupabaseProvider>
           <UserProvider>
+            <ModalProvider />
             <RegisterModal />
             <Navbar />
             {children}
