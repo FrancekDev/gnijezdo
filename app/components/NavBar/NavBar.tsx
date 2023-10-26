@@ -1,5 +1,6 @@
 'use client';
 
+import Categories from '../Categories/Categories';
 import Logo from './Logo';
 import Search from './Search';
 import UserMenu from './UserMenu';

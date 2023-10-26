@@ -3,12 +3,14 @@ import './globals.css';
 import Navbar from './components/NavBar/NavBar';
 
 import { Arapey, Manrope, Lora } from 'next/font/google';
-import Modal from './components/Modals/Modal';
-import RegisterModal from './components/Modals/RegisterModal';
-import ToasterProvider from './providers/ToasterProvider';
+import Modal from './components/Modals/AuthModalHelper';
+// import RegisterModal from './components/Modals/RegisterModal';
+
 import SupabaseProvider from '@/providers/SupabaseProvider';
 import UserProvider from '@/providers/UserProvider';
-import ModalProvider from './providers/ModalProvider';
+
+import ToasterProvider from '@/providers/ToasterProvider';
+import ModalProvider from '@/providers/ModalProvider';
 
 const fontSecondary = Arapey({ subsets: ['latin'], weight: ['400'] });
 const fontPrimary = Manrope({ subsets: ['latin'] });
@@ -30,7 +32,6 @@ export default function RootLayout({
         <SupabaseProvider>
           <UserProvider>
             <ModalProvider />
-            <RegisterModal />
             <Navbar />
             {children}
           </UserProvider>

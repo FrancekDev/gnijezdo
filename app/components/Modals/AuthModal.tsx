@@ -11,7 +11,8 @@ import { useRouter } from 'next/navigation';
 
 import useAuthModal from '@/hooks/useAuthModal';
 
-import Modal from './Modal';
+import Modal from './AuthModalHelper';
+import AuthModalHelper from './AuthModalHelper';
 
 const AuthModal = () => {
   const supabaseClient = useSupabaseClient();
@@ -33,12 +34,13 @@ const AuthModal = () => {
   };
 
   return (
-    <Modal
+    <AuthModalHelper
       title='Dobrodošli nazad'
-      description='Prijavite se na svoj korisnički račun'
+      description='Prijavite se!'
       isOpen={isOpen}
       onChange={onChange}
     >
+      {/* napraviti custom AUTH UI  */}
       <Auth
         providers={['google']}
         magicLink
@@ -50,12 +52,15 @@ const AuthModal = () => {
               colors: {
                 brand: '#155287',
                 brandAccent: '#3b5dad',
+                inputBackground: '#F7F7F3',
+                inputBorderFocus: '#155287',
+                inputBorderHover: '#3b5dad',
               },
             },
           },
         }}
       />
-    </Modal>
+    </AuthModalHelper>
   );
 };
 

@@ -14,6 +14,7 @@ import {
 
 import Places from './SearchBox';
 import Distance from './Distance';
+import Categories from '../Categories/Categories';
 
 //Shorthands for
 type LatLngLiteral = google.maps.LatLngLiteral;
@@ -37,7 +38,7 @@ const Map = () => {
   const mapRef = useRef<GoogleMap>();
 
   const center = useMemo<LatLngLiteral>(() => {
-    return { lat: 45.81, lng: 16.03 };
+    return { lat: 45.81, lng: 15.99 };
   }, []);
 
   const options = useMemo<MapOptions>(() => {
@@ -79,23 +80,27 @@ const Map = () => {
     );
 
   return (
-    <div className='container'>
-      <div className='controls'>
-        <Places
-          setLocation={(position) => {
-            setLocation(position);
-            mapRef.current?.panTo(position);
-          }}
-        />
+    <div className='relative top-[86px] flex w-full'>
+      {/* TODO: napraviti posebnu komponentu od sidebara */}
+      <div className='sidebar'>
+        <div className='flex flex-col justify-center'>
+          <p className='mb-3 text-center'>Upišite željenu lokaciju.</p>
+          <Places
+            setLocation={(position) => {
+              setLocation(position);
+              mapRef.current?.panTo(position);
+            }}
+          />
+        </div>
+        <Categories />
 
-        {/* {!location && <p>Upišite željenu lokaciju.</p>} */}
         {directions && <Distance leg={directions.routes[0].legs[0]} />}
       </div>
-      <div className='map'>
+      <div className='map-container'>
         <GoogleMap
           zoom={12}
           center={center}
-          mapContainerClassName='map-container'
+          mapContainerClassName='map'
           options={options}
           onLoad={onLoad}
         >

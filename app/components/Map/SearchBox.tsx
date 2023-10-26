@@ -40,18 +40,18 @@ export default function SearchBox({ setLocation }: SearchBoxProps) {
   };
 
   return (
-    <>
+    <div className='flex justify-center'>
       <Ariakit.ComboboxProvider>
-        <label className='label'>
-          Upišite željenu lokaciju.
-          <Ariakit.Combobox
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            disabled={!ready}
-            className='combobox'
-            placeholder='Gornji Grad, Zagreb'
-          />
-        </label>
+        {/* <label className='label'>
+          Upišite željenu lokaciju. */}
+        <Ariakit.Combobox
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={!ready}
+          className='combobox'
+          placeholder='Gornji Grad, Zagreb'
+        />
+        {/* </label> */}
         {status === 'OK' && (
           <Ariakit.ComboboxPopover gutter={8} sameWidth className='popover'>
             {status === 'OK' &&
@@ -67,6 +67,6 @@ export default function SearchBox({ setLocation }: SearchBoxProps) {
           </Ariakit.ComboboxPopover>
         )}
       </Ariakit.ComboboxProvider>
-    </>
+    </div>
   );
 }
