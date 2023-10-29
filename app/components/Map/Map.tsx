@@ -12,9 +12,9 @@ import {
   LoadScriptProps,
 } from '@react-google-maps/api';
 
-import Places from './SearchBox';
 import Distance from './Distance';
 import Categories from '../Categories/Categories';
+import SearchBox from '../Inputs/SearchBox';
 
 //Shorthands for
 type LatLngLiteral = google.maps.LatLngLiteral;
@@ -23,7 +23,11 @@ type MapOptions = google.maps.MapOptions;
 
 const libraries: LoadScriptProps['libraries'] = ['places'];
 
-const Map = () => {
+interface MapProps {
+  small?: boolean;
+}
+
+const Map: React.FC<MapProps> = ({ small }) => {
   const googleMapsApiKey: string =
     process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
 
@@ -80,27 +84,47 @@ const Map = () => {
     );
 
   return (
-    <div className='relative top-[86px] flex w-full'>
-      {/* TODO: napraviti posebnu komponentu od sidebara */}
-      <div className='sidebar'>
-        <div className='flex flex-col justify-center'>
-          <p className='mb-3 text-center'>Upišite željenu lokaciju.</p>
-          <Places
-            setLocation={(position) => {
-              setLocation(position);
-              mapRef.current?.panTo(position);
-            }}
-          />
-        </div>
-        <Categories />
+    <div
+      className={`${
+        small ? 'flex flex-col ' : 'relative top-[86px] flex w-full'
+      }`}
+    >
+      {/* TODO: napraviti posebnu komponentu od sidebara, pitanje dali se može */}
+      <div className={`${small ? 'pb-8' : 'w-[30%] bg-bei p-4 text-blu'}`}>
+        {small ? (
+          <>
+            <div className='flex flex-col justify-center'>
+              <SearchBox
+                small
+                setLocation={(position) => {
+                  setLocation(position);
+                  mapRef.current?.panTo(position);
+                }}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className='flex flex-col justify-center'>
+              <p className='mb-3 text-center'>Upišite željenu lokaciju.</p>
+              <SearchBox
+                setLocation={(position) => {
+                  setLocation(position);
+                  mapRef.current?.panTo(position);
+                }}
+              />
+            </div>
+            <Categories />
+          </>
+        )}
 
         {directions && <Distance leg={directions.routes[0].legs[0]} />}
       </div>
-      <div className='map-container'>
+      <div className='w-[100%]'>
         <GoogleMap
           zoom={12}
           center={center}
-          mapContainerClassName='map'
+          mapContainerClassName={`${small ? 'h-80' : 'h-[calc(100vh-86px)]'}`}
           options={options}
           onLoad={onLoad}
         >

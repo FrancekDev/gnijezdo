@@ -37,12 +37,14 @@
     "react-hook-form": "^7.47.0",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.11.0",
+    "react-select": "^5.7.7",
     "react-spinners": "^0.13.8",
     "stripe": "^13.10.0",
     "tailwindcss": "3.3.3",
     "typescript": "5.2.2",
     "uniqid": "^5.4.0",
     "use-places-autocomplete": "^4.0.1",
+    "world-countries": "^5.0.0",
     "zustand": "^4.4.1"
   },
   "devDependencies": {

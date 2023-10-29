@@ -6,7 +6,9 @@ import Input from '../Inputs/Input';
 import { useMemo, useState } from 'react';
 import CategoryInputs from '../Inputs/CategoryInputs';
 import { categories } from '../Categories/Categories';
-import { FieldValues, useForm } from 'react-hook-form';
+import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import SearchBox from '../Inputs/SearchBox';
+import Map from '../Map/Map';
 
 enum STEPS {
   CATEGORY = 0,
@@ -67,6 +69,13 @@ const UploadModal = () => {
     setStep((value) => value + 1);
   };
 
+  // funkscija za submitanje is resetiranje forme te postanje novog listinga
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    if (step !== STEPS.PRICE) {
+      return onNext();
+    }
+  };
+
   const actionLabel = useMemo(() => {
     if (step === STEPS.PRICE) {
       return 'Predaj oglas';
@@ -111,11 +120,28 @@ const UploadModal = () => {
     </div>
   );
 
+  if (step === STEPS.LOCATION) {
+    bodyContent = (
+      <div className='flex flex-col gap-8'>
+        <Heading
+          title='Gdje se nalazi vaša nekretnina?'
+          subtitle='Pomozite potencijalnim kupcima da vas nađu.'
+        />
+        <Map small />
+        {/* <CountrySelect
+          value={location}
+          onChange={(value) => setCustomValue('location', value)}
+        />
+        <Map center={location?.latlng} /> */}
+      </div>
+    );
+  }
+
   return (
     <ModalHelper
       isOpen={uploadModal.isOpen}
       onClose={uploadModal.onClose}
-      onSubmit={uploadModal.onClose}
+      onSubmit={handleSubmit(onSubmit)}
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}

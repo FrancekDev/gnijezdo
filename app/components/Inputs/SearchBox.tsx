@@ -4,13 +4,19 @@ import usePlacesAutocomplete, {
 } from 'use-places-autocomplete';
 
 import * as Ariakit from '@ariakit/react';
+
 import { Autocomplete } from '@react-google-maps/api';
 
 type SearchBoxProps = {
   setLocation: (position: google.maps.LatLngLiteral) => void;
 };
 
-export default function SearchBox({ setLocation }: SearchBoxProps) {
+interface SerachBoxProps {
+  setLocation: (position: google.maps.LatLngLiteral) => void;
+  small?: boolean;
+}
+
+const SearchBox: React.FC<SerachBoxProps> = ({ small, setLocation }) => {
   const {
     ready,
     value,
@@ -42,16 +48,18 @@ export default function SearchBox({ setLocation }: SearchBoxProps) {
   return (
     <div className='flex justify-center'>
       <Ariakit.ComboboxProvider>
-        {/* <label className='label'>
-          Upišite željenu lokaciju. */}
         <Ariakit.Combobox
           value={value}
           onChange={(e) => setValue(e.target.value)}
           disabled={!ready}
-          className='combobox'
-          placeholder='Gornji Grad, Zagreb'
+          className={`${
+            small
+              ? 'h-10 w-80 rounded-md border-none bg-white pl-4 pr-4 text-base leading-6 text-gray-900 shadow outline-2 outline-blu'
+              : 'h-10 w-48 rounded-md border-none bg-white pl-4 pr-4 text-base leading-6 text-gray-900 shadow outline-2 outline-blu'
+          }`}
+          placeholder={`Gornji Grad, Zagreb`}
         />
-        {/* </label> */}
+
         {status === 'OK' && (
           <Ariakit.ComboboxPopover gutter={8} sameWidth className='popover'>
             {status === 'OK' &&
@@ -69,4 +77,6 @@ export default function SearchBox({ setLocation }: SearchBoxProps) {
       </Ariakit.ComboboxProvider>
     </div>
   );
-}
+};
+
+export default SearchBox;

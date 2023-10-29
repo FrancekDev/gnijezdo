@@ -40,6 +40,23 @@ const ModalHelper: React.FC<ModalHelperProps> = ({
       onClose();
     }
   };
+
+  const handleSubmit = useCallback(() => {
+    if (disabled) {
+      return;
+    }
+
+    onSubmit();
+  }, [onSubmit, disabled]);
+
+  const handleSecondaryAction = useCallback(() => {
+    if (disabled || !secondaryAction) {
+      return;
+    }
+
+    secondaryAction();
+  }, [secondaryAction, disabled]);
+
   return (
     <>
       <Dialog.Root open={isOpen} defaultOpen={isOpen} onOpenChange={onChange}>
@@ -115,10 +132,10 @@ const ModalHelper: React.FC<ModalHelperProps> = ({
             )}
 
             <div>
-              <div className='relative flex-auto p-5'>{body}</div>
+              <div className='relative flex-auto gap-2 p-5'>{body}</div>
             </div>
 
-            <div className='flex flex-col gap-2 p-6'>
+            <div className='flex flex-col p-5 pt-1'>
               <div
                 className='
                     flex 
@@ -132,14 +149,14 @@ const ModalHelper: React.FC<ModalHelperProps> = ({
                   <Button
                     disabled={disabled}
                     label={secondaryActionLabel}
-                    onClick={() => {}}
+                    onClick={handleSecondaryAction}
                     outline
                   />
                 )}
                 <Button
                   disabled={disabled}
                   label={actionLabel}
-                  onClick={() => {}}
+                  onClick={handleSubmit}
                 />
               </div>
               {footer}

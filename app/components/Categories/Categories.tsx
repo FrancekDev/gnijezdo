@@ -43,7 +43,7 @@ const Categories = () => {
   }
 
   return (
-    <>
+    <Container>
       <div
         className='
         flex
@@ -64,7 +64,7 @@ const Categories = () => {
           />
         ))}
       </div>
-    </>
+    </Container>
   );
 };
 
