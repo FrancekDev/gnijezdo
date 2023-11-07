@@ -12,12 +12,12 @@ const Logo = () => {
   return (
     <div className='flex cursor-pointer flex-row items-center justify-center'>
       <Image
-        //   onClick={() => router.push('/')}
+        onClick={() => router.push('/')}
         src='/images/light.png'
         alt='Logo'
         height='70'
         width='70'
-        className='md:block'
+        className='cursor-pointer md:block'
       />
     </div>
   );

@@ -81,14 +81,14 @@ const ModalHelper: React.FC<ModalHelperProps> = ({
           translate-x-[-50%] 
           translate-y-[-50%] 
           rounded-md
-          bg-bei
-          p-[25px]
+          bg-bei 
+          p-[25px] 
           drop-shadow-md 
           focus:outline-none 
           md:h-auto 
-          md:max-h-[85vh] 
-          md:w-[90vw] 
-          md:max-w-[450px]'
+          md:max-h-[85vh]
+          md:w-[90vw] md:max-w-[600px]
+          '
           >
             <Dialog.Close asChild>
               <button

@@ -144,7 +144,8 @@ a {
 }
 
 .combobox-item:hover {
-  background-color: hsl(204 100% 80% / 0.4);
+  background-color: #e6e4e0;
+  color: #155287;
 }
 
 .combobox-item[data-active-item] {
@@ -153,11 +154,11 @@ a {
 }
 
 :is(.dark .combobox-item:hover) {
-  background-color: hsl(204 100% 40% / 0.25);
+  background-color: #e6e4e0;
 }
 
 :is(.dark .combobox-item)[data-active-item] {
-  background-color: hsl(204 100% 40%);
+  background-color: #e6e4e0;
 }
 
 .no-results {

@@ -6,6 +6,8 @@ import Search from './Search';
 import UserMenu from './UserMenu';
 
 const Navbar = () => {
+  // OTDO: loader
+  // if (!isLoaded)
   return (
     <header className='fixed z-10 w-full bg-[#FFF5DC] text-blu shadow-sm'>
       <div className='m-auto w-5/6 py-2'>
