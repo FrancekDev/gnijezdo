@@ -1,170 +1,8 @@
-// import useUploadModal from '@/hooks/useUploadModal';
-
-// import ModalHelper from './ModalHelper';
-// import Heading from '../Heading';
-// import Input from '../Inputs/Input';
-// import { useEffect, useMemo, useState } from 'react';
-// import CategoryInputs from '../Inputs/CategoryInputs';
-// import { categories } from '../Categories/Categories';
-// import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-// import SearchBox from '../Inputs/SearchBox';
-// import Map from '../Map/Map';
-
-// enum STEPS {
-//   CATEGORY = 0,
-//   LOCATION = 1,
-//   INFO = 2,
-//   IMAGES = 3,
-//   DESCRIPTION = 4,
-//   PRICE = 5,
-// }
-
-// const UploadModal = () => {
-//   const uploadModal = useUploadModal();
-
-//   const [step, setStep] = useState(STEPS.CATEGORY);
-
-//   const {
-//     register,
-//     handleSubmit,
-//     setValue,
-//     watch,
-//     formState: { errors },
-//     reset,
-//   } = useForm<FieldValues>({
-//     defaultValues: {
-//       address: '',
-//       category: '',
-//       location: [null, null],
-//       price: 1,
-//       description: '',
-//       image_src: '',
-//       bathroom_count: 1,
-//       room_count: 1,
-//     },
-//   });
-
-//   const category = watch('category');
-
-//   // funkcija za rerender inputa
-
-//   const setCustomValue = (id: string, value: any) => {
-//     setValue(id, value, {
-//       shouldValidate: true,
-//       shouldDirty: true,
-//       shouldTouch: true,
-//     });
-//   };
-
-//   const onBack = () => {
-//     setStep((value) => value - 1);
-//   };
-
-//   const onNext = () => {
-//     setStep((value) => value + 1);
-//   };
-
-//   // SUBMIT
-
-//   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-//     if (step !== STEPS.PRICE) {
-//       return onNext();
-//     }
-//   };
-
-//   const actionLabel = useMemo(() => {
-//     if (step === STEPS.PRICE) {
-//       return 'Predaj oglas';
-//     }
-//     return 'Naprijed';
-//   }, [step]);
-
-//   const secondaryActionLabel = useMemo(() => {
-//     if (step === STEPS.CATEGORY) {
-//       return undefined;
-//     }
-//     return 'Nazad';
-//   }, [step]);
-
-//   // PLACE REGISTER
-
-//   useEffect(() => {
-//     register('address', { required: 'Upišite adresu nekretnine.' });
-//     register('location', { required: true });
-//   }, [register]);
-
-//   let bodyContent = (
-//     <div className='flex flex-col gap-6'>
-//       <Heading
-//         title='Koje je vrste vaša nekretnina?'
-//         subtitle='Izaberite kategoriju'
-//       />
-//       <div
-//         className='
-//         grid
-//         max-h-[50vh]
-//         grid-cols-1
-//         gap-3
-//         overflow-y-auto
-//         md:grid-cols-3
-//       '
-//       >
-//         {categories.map((item) => (
-//           <div className='col-span-1' key={item.label}>
-//             <CategoryInputs
-//               onClick={(category) => setCustomValue('category', category)}
-//               selected={category === item.label}
-//               label={item.label}
-//               icon={item.icon}
-//             />
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-
-//   if (step === STEPS.LOCATION) {
-//     bodyContent = (
-//       <div className='flex flex-col gap-8'>
-//         <Heading
-//           title='Gdje se nalazi vaša nekretnina?'
-//           subtitle='Pomozite potencijalnim kupcima da vas nađu.'
-//         />
-//         <Map small />
-//         {/* <CountrySelect
-//           value={location}
-//           onChange={(value) => setCustomValue('location', value)}
-//         />
-//         <Map center={location?.latlng} /> */}
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <ModalHelper
-//       isOpen={uploadModal.isOpen}
-//       onClose={uploadModal.onClose}
-//       onSubmit={handleSubmit(onSubmit)}
-//       actionLabel={actionLabel}
-//       secondaryActionLabel={secondaryActionLabel}
-//       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}
-//       title='Opišite svoju nekretninu'
-//       body={bodyContent}
-//     />
-//   );
-// };
-
-// export default UploadModal;
-
-// COPY 2
+'use client';
 
 import useUploadModal from '@/hooks/useUploadModal';
 
-import ModalHelper from './ModalHelper';
-import Heading from '../Heading';
-import Input from '../Inputs/Input';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import CategoryInputs from '../Inputs/CategoryInputs';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { categories } from '../Categories/Categories';
 import {
   Controller,
@@ -172,13 +10,16 @@ import {
   SubmitHandler,
   useForm,
 } from 'react-hook-form';
-import SearchBox from '../Inputs/SearchBox';
-import Map from '../Map/Map';
-import LocationForm from '../Inputs/LoactionForm';
-import { on } from 'process';
-import Counter from '../Inputs/Counter';
 
 import { IoIosArrowDropdown } from 'react-icons/io';
+
+import ModalHelper from './ModalHelper';
+import Heading from '../Heading';
+import Counter from '../Inputs/Counter';
+import LocationForm from '../Inputs/LoactionForm';
+import Input from '../Inputs/Input';
+import CategoryInputs from '../Inputs/CategoryInputs';
+import ImageInput from '../Inputs/ImageInput';
 
 enum STEPS {
   CATEGORY = 0,
@@ -189,20 +30,21 @@ enum STEPS {
   PRICE = 5,
 }
 
-interface FormData {
-  address: string;
-  category: string;
-  location: [number, number] | [null, null];
-  price: number;
-  description: string;
-  image_src: string;
-  bathroom_count: number;
-  room_count: number;
-}
+// type FormData = {
+//   address: string;
+//   category: string;
+//   location: [number, number] | [null, null];
+//   price: number;
+//   description: string;
+//   image_src: string;
+//   bathroom_count: number;
+//   room_count: number;
+// };
 
 const UploadModal = () => {
   const uploadModal = useUploadModal();
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string>();
   const [step, setStep] = useState(STEPS.CATEGORY);
 
   const {
@@ -213,7 +55,7 @@ const UploadModal = () => {
     watch,
     formState: { errors },
     reset,
-  } = useForm<FormData>({
+  } = useForm<FieldValues>({
     defaultValues: {
       address: '',
       category: '',
@@ -233,9 +75,11 @@ const UploadModal = () => {
   const bathroom_count = watch('bathroom_count');
   const room_count = watch('room_count');
 
+  const image_src = watch('image_src');
+
   // SUBMIT
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
     if (step !== STEPS.PRICE) {
       return onNext();
     }
@@ -243,7 +87,7 @@ const UploadModal = () => {
 
   // FUNKCIJA ZA INPUTE
 
-  const setCustomValue = (id: any, value: any) => {
+  const setCustomValue = (id: keyof FieldValues, value: any) => {
     setValue(id, value, {
       shouldValidate: true,
       shouldDirty: true,
@@ -337,15 +181,15 @@ const UploadModal = () => {
 
         {/* //TODO: validacija podataka required */}
         <Controller
-          control={control}
           name='location'
+          control={control}
           render={({ field: { onChange, value } }) => (
             <LocationForm
               onSelectAddress={(
                 address: string,
                 location: [number, number] | [null, null]
               ) => {
-                onChange(address);
+                // onChange(address);
                 setValue('address', address);
                 setValue('location', location);
               }}
@@ -376,7 +220,7 @@ const UploadModal = () => {
         <div
           onScroll={handleScroll}
           ref={containerRef}
-          className='scr flex flex-col gap-4 overflow-y-auto'
+          className='flex flex-col gap-4 overflow-y-auto'
         >
           <Heading
             title='Što posjeduje vaša nekretina?'
@@ -450,6 +294,66 @@ const UploadModal = () => {
           </div>
         )}
       </>
+    );
+  }
+
+  // STEP 3
+
+  if (step === STEPS.IMAGES) {
+    bodyContent = (
+      <div className='flex flex-col gap-8'>
+        <Heading
+          title='Dodajte slike vaše nekretnine'
+          subtitle='Pokažite kupcima kako izgleda vaša nekretnina.'
+        />
+        <Controller
+          name='image_src'
+          control={control}
+          defaultValue={''}
+          // TODO: napraviti validaciju za min 2 slike
+          // i napraviti conditional render za "molimo vas ucitajte minimalno dvije slike"
+          rules={{ required: true }}
+          render={({ field: { onChange, value } }) => (
+            <ImageInput
+              value={value}
+              placeholder='Učitajte željene slike'
+              id='image'
+              type='file'
+              disabled={isLoading}
+              accept='image/*'
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                if (event?.target?.files?.[0]) {
+                  const file = event.target.files[0];
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setPreviewImage(reader.result as string);
+                  };
+                  reader.readAsDataURL(file);
+                }
+                setCustomValue('image_src', value);
+              }}
+              // onChange={(
+              //   value: string,
+              //   event: ChangeEvent<HTMLInputElement>
+              // ) => {
+              //   onChange(value);
+              //   setCustomValue('image_src', value);
+              // }}
+            />
+          )}
+        />
+      </div>
+    );
+  }
+
+  if (step === STEPS.DESCRIPTION) {
+    bodyContent = (
+      <div className='flex flex-col gap-8'>
+        <Heading
+          title='Opišite kako izgleda vaša nekretnina'
+          subtitle='Kratko i jasno'
+        />
+      </div>
     );
   }
 

@@ -37,7 +37,7 @@ const Menu = () => {
           md:py-1
         '
         >
-          <AvatarComp />
+          <AvatarComp src={user?.user_metadata.avatar_url} />
         </button>
       </DropdownMenu.Trigger>
 

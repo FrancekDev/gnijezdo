@@ -7,14 +7,10 @@ import Image from 'next/image';
 import Loader from './Loader';
 
 interface AvatarProps {
-  // src: string | null | undefined;
+  src: string | null | undefined;
 }
 
-const AvatarComp: React.FC<AvatarProps> = () => {
-  const { user } = useUser();
-
-  const userImage = user?.user_metadata.avatar_url;
-
+const AvatarComp: React.FC<AvatarProps> = ({ src }) => {
   return (
     // TODO: napraviti Loader dok se ne učita navBar
     <Avatar.Root>
@@ -22,7 +18,7 @@ const AvatarComp: React.FC<AvatarProps> = () => {
         height={30}
         width={30}
         className='rounded-full'
-        src={userImage || '/images/avatar.jpg'}
+        src={src || '/images/avatar.jpg'}
         // onLoadingStatusChange={(
         //   status: 'idle' | 'loading' | 'loaded' | 'error'
         // ) => <Loader />}

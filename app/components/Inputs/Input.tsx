@@ -10,7 +10,7 @@ interface InputProps {
   disabled?: boolean;
   formatPrice?: boolean;
   required?: boolean;
-  register: UseFormRegister<FieldValues>;
+  register: UseFormRegister<FormData>;
   errors: FieldErrors;
 }
 
@@ -26,7 +26,7 @@ const Input: React.FC<InputProps> = ({
 }) => {
   return (
     <div className='relative w-full'>
-      {/*  možda inije potrebno */}
+      {/*  možda i nije potrebno */}
       {formatPrice && (
         <BiDollar
           size={20}
@@ -66,7 +66,6 @@ const Input: React.FC<InputProps> = ({
         className={`
         text-md 
         absolute
-
         top-4
         z-10 
         origin-[0] 
