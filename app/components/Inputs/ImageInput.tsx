@@ -37,7 +37,7 @@ const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
           />
           <label
             htmlFor='image'
-            className='flex h-10 w-full cursor-pointer items-center justify-center'
+            className='flex h-10 w-full cursor-pointer items-center justify-center text-neutral-600'
           >
             Učitajte željene slike
           </label>

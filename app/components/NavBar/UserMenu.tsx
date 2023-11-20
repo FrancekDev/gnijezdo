@@ -44,8 +44,8 @@ const UserMenu = () => {
       >
         {user ? (
           <div className='flex w-44 shrink-0 items-center gap-x-4'>
-            <Button small label='Odjavi se' onClick={handleLogout} />
             <Menu />
+            <Button small label='Odjavi se' onClick={handleLogout} />
           </div>
         ) : (
           <div className='flex w-20 gap-4'>

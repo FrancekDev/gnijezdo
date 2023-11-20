@@ -31,11 +31,10 @@ const Input: React.FC<InputProps> = ({
       {price ? (
         <CurrencyInput
           id={id}
-          placeholder='2,000.00€'
+          placeholder='2,000.00 €'
           decimalsLimit={2}
-          suffix='€'
+          suffix=' €'
           {...register(id, { required })}
-          onValueChange={(value, name) => console.log(value, name)}
           className={`
         peer
         w-full
@@ -67,7 +66,7 @@ const Input: React.FC<InputProps> = ({
             left-4
             m-1
             mt-6
-            min-h-[120px]
+            min-h-fit
             w-full
             resize-none 
             border-b
@@ -117,15 +116,15 @@ const Input: React.FC<InputProps> = ({
                 top-0 
                 z-10 
                 origin-[0] 
-                -translate-y-3
+                -translate-y-2
                 transform
-                duration-150
+                duration-200
                 peer-placeholder-shown:translate-y-0
                 peer-placeholder-shown:scale-100
                 peer-focus:-translate-y-3
                 peer-focus:scale-90
                 peer-focus:border-b 
-                ${errors[id] ? 'text-rose-500' : 'text-zinc-700'}
+                ${errors[id] ? 'text-rose-500' : 'text-neutral-600'}
                 ${
                   errors[id]
                     ? 'peer-focus:border-rose-500'

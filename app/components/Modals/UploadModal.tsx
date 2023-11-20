@@ -1,51 +1,59 @@
 'use client';
 
-import useUploadModal from '@/hooks/useUploadModal';
-
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { categories } from '../Categories/Categories';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/hooks/useUser';
+import useUploadModal from '@/hooks/useUploadModal';
 import {
   Controller,
   FieldValues,
   SubmitHandler,
   useForm,
 } from 'react-hook-form';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import uniqid from 'uniqid';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 import { IoIosArrowDropdown } from 'react-icons/io';
 
 import ModalHelper from './ModalHelper';
 import Heading from '../Heading';
+import Input from '../Inputs/Input';
 import Counter from '../Inputs/Counter';
 import LocationForm from '../Inputs/LoactionForm';
-import Input from '../Inputs/Input';
 import CategoryInputs from '../Inputs/CategoryInputs';
 import ImageInput from '../Inputs/ImageInput';
+import { categories } from '../Categories/Categories';
 
 enum STEPS {
   CATEGORY = 0,
   LOCATION = 1,
-  INFO = 2,
+  DESCRIPTION = 2,
   IMAGES = 3,
-  DESCRIPTION = 4,
+  INFO = 4,
   PRICE = 5,
 }
 
-type FormData = {
-  address: string;
-  category: string;
-  location: [number, number] | [null, null];
-  price: number;
-  description: string;
-  image_src: string;
-  bathroom_count: number;
-  room_count: number;
-};
+// type FormData = {
+//   address: string;
+//   category: string;
+//   location: [number, number] | [null, null];
+//   price: number;
+//   description: string;
+//   image_src: string;
+//   bathroom_count: number;
+//   room_count: number;
+// };
 
 const UploadModal = () => {
   const uploadModal = useUploadModal();
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState<string>();
   const [step, setStep] = useState(STEPS.CATEGORY);
+  const user = useUser();
+  const router = useRouter();
+  const supabaseClient = useSupabaseClient();
 
   const {
     register,
@@ -57,33 +65,27 @@ const UploadModal = () => {
     reset,
   } = useForm<FieldValues>({
     defaultValues: {
-      address: '',
       category: '',
+      address: '',
       location: [],
-      price: 1,
+      title: '',
       description: '',
       image_src: '',
       bathroom_count: 1,
       room_count: 1,
+      price: 1,
     },
   });
 
   const category = watch('category');
 
   const address = watch('address');
+  const location = watch('location');
 
   const bathroom_count = watch('bathroom_count');
   const room_count = watch('room_count');
 
   const image_src = watch('image_src');
-
-  // SUBMIT
-
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    if (step !== STEPS.PRICE) {
-      return onNext();
-    }
-  };
 
   // FUNKCIJA ZA INPUTE
 
@@ -134,6 +136,48 @@ const UploadModal = () => {
       setReachedEnd(isAtEnd);
     }
   };
+
+  // SUBMIT
+
+  const onSubmit: SubmitHandler<FieldValues> = async (values) => {
+    if (step !== STEPS.PRICE) {
+      return onNext();
+    }
+
+    try {
+      setIsLoading(true);
+
+      if (
+        !category ||
+        !address ||
+        !location ||
+        !bathroom_count ||
+        !room_count ||
+        !image_src ||
+        !user
+      ) {
+        toast.error('Potrebno je popuniti sva polja!');
+        return;
+      }
+
+      const uniqueID = uniqid();
+
+      //upload images
+      const { data: ImageData, error: imageError } =
+        await supabaseClient.storage
+          .from('images')
+          .upload(`image-${values.title}-${uniqueID}`, image_src, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+    } catch (error) {
+      toast.error('Nešto je pošlo po krivu');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // TODO: napraviti verifikaciju podataka i required...
 
   // STEP 0
 
@@ -214,6 +258,91 @@ const UploadModal = () => {
   }
 
   // STEP 2
+
+  if (step === STEPS.DESCRIPTION) {
+    bodyContent = (
+      <div className='flex flex-col gap-6'>
+        <Heading
+          title='Kako izgleda vaša nekretnina?'
+          subtitle='Molimo vas kratko opišite vašu nekretninu kako bi potencijani kupci znali što nudite.'
+        />
+        <Input
+          id='title'
+          label='Naziv oglasa'
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          placeholder={'Mala kućica u predgrađu Zagreba'}
+          required
+        />
+        <Input
+          textarea
+          id='description'
+          label='Opis nekretnine'
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          placeholder={
+            'Jednokatnica sa uređenim papirima, tlocrtne površine 70m2, ukupna površina zemljišta 180m2. Obnovljena 2017 god. nova stolarija, instalacije, ugrađeno podno grijanje. 20min vožnje od Zagreba.'
+          }
+          required
+        />
+      </div>
+    );
+  }
+
+  // STEP 3
+
+  if (step === STEPS.IMAGES) {
+    bodyContent = (
+      <div className='flex flex-col gap-6'>
+        <Heading
+          title='Imate li slike vaše nekretnine?'
+          subtitle='Molimo vas učitajte slike nekretnine.'
+        />
+
+        <Controller
+          name='image_src'
+          control={control}
+          defaultValue={''}
+          rules={{
+            required: true,
+            validate: (image) => {
+              if (image) return true;
+              return 'Molimo vas da učitate željene slike';
+            },
+          }}
+          render={({ field: { value, onChange } }) => (
+            <ImageInput
+              value={value} // Use field.value instead of image_src
+              src={image}
+              placeholder='Učitajte željene slike'
+              id='image'
+              type='file'
+              disabled={isLoading}
+              accept='image/*'
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                if (event?.target?.files?.[0]) {
+                  const file = event.target.files[0];
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setImage(reader.result as string);
+                  };
+                  reader.readAsDataURL(file);
+                }
+
+                const newValue = event.target.value; // Assuming the value you want is the input value
+                onChange(newValue);
+                setCustomValue('image_src', newValue);
+              }}
+            />
+          )}
+        />
+      </div>
+    );
+  }
+
+  // STEP 4
 
   if (step === STEPS.INFO) {
     bodyContent = (
@@ -298,99 +427,14 @@ const UploadModal = () => {
     );
   }
 
-  // STEP 3
-
-  if (step === STEPS.IMAGES) {
-    bodyContent = (
-      <div className='flex flex-col gap-6'>
-        <Heading
-          title='Dodajte slike vaše nekretnine'
-          subtitle='Pokažite kupcima kako izgleda vaša nekretnina.'
-        />
-
-        <Controller
-          name='image_src'
-          control={control}
-          defaultValue={''}
-          rules={{
-            required: true,
-            validate: (image) => {
-              if (image) return true;
-              return 'Molimo vas da učitate željene slike';
-            },
-          }}
-          render={({ field }) => (
-            <ImageInput
-              value={field.value} // Use field.value instead of image_src
-              src={image}
-              placeholder='Učitajte željene slike'
-              id='image'
-              type='file'
-              disabled={isLoading}
-              accept='image/*'
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                if (event?.target?.files?.[0]) {
-                  const file = event.target.files[0];
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    setImage(reader.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                }
-
-                const newValue = event.target.value; // Assuming the value you want is the input value
-                field.onChange(newValue);
-                setCustomValue('image_src', newValue);
-              }}
-            />
-          )}
-        />
-      </div>
-    );
-  }
-
-  // STEP 4
-
-  if (step === STEPS.DESCRIPTION) {
-    bodyContent = (
-      <div className='flex flex-col gap-6'>
-        <Heading
-          title='Kako izgleda vaša nekretnina?'
-          subtitle='Molimo vas kratko opišite vašu nekretninu kako bi potencijani kupci znali što nudite.'
-        />
-        <Input
-          id='title'
-          label='Naziv oglasa'
-          disabled={isLoading}
-          register={register}
-          errors={errors}
-          placeholder={'Mala kućica u predgrađu Zagreba'}
-          required
-        />
-        <Input
-          textarea
-          id='description'
-          label='Opis nekretnine'
-          disabled={isLoading}
-          register={register}
-          errors={errors}
-          placeholder={
-            'Jednokatnica sa uređenim papirima, tlocrtne površine 70m2, ukupna površina zemljišta 180m2. Obnovljena 2017 god. nova stolarija, instalacije, ugrađeno podno grijanje. 20min vožnje od Zagreba.'
-          }
-          required
-        />
-      </div>
-    );
-  }
-
   // STEP 5
 
   if (step === STEPS.PRICE) {
     bodyContent = (
       <div className='flex flex-col gap-8'>
         <Heading
-          title='Sada postavite traženu cijenu za vašu nekretninu.'
-          subtitle='Kolika je cijena vaše nekretnine po kvadratu?'
+          title='Kolika je ukupna cijena vaše nekretnine?'
+          subtitle='Postavite traženu cijenu za vašu nekretninu.'
         />
         <Input
           price
