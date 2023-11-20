@@ -30,21 +30,21 @@ enum STEPS {
   PRICE = 5,
 }
 
-// type FormData = {
-//   address: string;
-//   category: string;
-//   location: [number, number] | [null, null];
-//   price: number;
-//   description: string;
-//   image_src: string;
-//   bathroom_count: number;
-//   room_count: number;
-// };
+type FormData = {
+  address: string;
+  category: string;
+  location: [number, number] | [null, null];
+  price: number;
+  description: string;
+  image_src: string;
+  bathroom_count: number;
+  room_count: number;
+};
 
 const UploadModal = () => {
   const uploadModal = useUploadModal();
   const [isLoading, setIsLoading] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string>();
+  const [image, setImage] = useState<string>();
   const [step, setStep] = useState(STEPS.CATEGORY);
 
   const {
@@ -59,7 +59,7 @@ const UploadModal = () => {
     defaultValues: {
       address: '',
       category: '',
-      location: [null, null],
+      location: [],
       price: 1,
       description: '',
       image_src: '',
@@ -119,7 +119,7 @@ const UploadModal = () => {
     return 'Nazad';
   }, [step]);
 
-  // scroll functionality
+  // scroll functionality on info step
 
   const [reachedEnd, setReachedEnd] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -128,11 +128,9 @@ const UploadModal = () => {
     const container = containerRef.current;
 
     if (container) {
-      // Check if you've reached the end by comparing scroll properties.
       const isAtEnd =
         container.scrollTop + container.clientHeight >= container.scrollHeight;
 
-      // Update the state variable accordingly.
       setReachedEnd(isAtEnd);
     }
   };
@@ -183,6 +181,9 @@ const UploadModal = () => {
         <Controller
           name='location'
           control={control}
+          rules={{
+            required: true,
+          }}
           render={({ field: { onChange, value } }) => (
             <LocationForm
               onSelectAddress={(
@@ -301,21 +302,27 @@ const UploadModal = () => {
 
   if (step === STEPS.IMAGES) {
     bodyContent = (
-      <div className='flex flex-col gap-8'>
+      <div className='flex flex-col gap-6'>
         <Heading
           title='Dodajte slike vaše nekretnine'
           subtitle='Pokažite kupcima kako izgleda vaša nekretnina.'
         />
+
         <Controller
           name='image_src'
           control={control}
           defaultValue={''}
-          // TODO: napraviti validaciju za min 2 slike
-          // i napraviti conditional render za "molimo vas ucitajte minimalno dvije slike"
-          rules={{ required: true }}
-          render={({ field: { onChange, value } }) => (
+          rules={{
+            required: true,
+            validate: (image) => {
+              if (image) return true;
+              return 'Molimo vas da učitate željene slike';
+            },
+          }}
+          render={({ field }) => (
             <ImageInput
-              value={value}
+              value={field.value} // Use field.value instead of image_src
+              src={image}
               placeholder='Učitajte željene slike'
               id='image'
               type='file'
@@ -326,19 +333,15 @@ const UploadModal = () => {
                   const file = event.target.files[0];
                   const reader = new FileReader();
                   reader.onloadend = () => {
-                    setPreviewImage(reader.result as string);
+                    setImage(reader.result as string);
                   };
                   reader.readAsDataURL(file);
                 }
-                setCustomValue('image_src', value);
+
+                const newValue = event.target.value; // Assuming the value you want is the input value
+                field.onChange(newValue);
+                setCustomValue('image_src', newValue);
               }}
-              // onChange={(
-              //   value: string,
-              //   event: ChangeEvent<HTMLInputElement>
-              // ) => {
-              //   onChange(value);
-              //   setCustomValue('image_src', value);
-              // }}
             />
           )}
         />
@@ -346,12 +349,57 @@ const UploadModal = () => {
     );
   }
 
+  // STEP 4
+
   if (step === STEPS.DESCRIPTION) {
+    bodyContent = (
+      <div className='flex flex-col gap-6'>
+        <Heading
+          title='Kako izgleda vaša nekretnina?'
+          subtitle='Molimo vas kratko opišite vašu nekretninu kako bi potencijani kupci znali što nudite.'
+        />
+        <Input
+          id='title'
+          label='Naziv oglasa'
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          placeholder={'Mala kućica u predgrađu Zagreba'}
+          required
+        />
+        <Input
+          textarea
+          id='description'
+          label='Opis nekretnine'
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          placeholder={
+            'Jednokatnica sa uređenim papirima, tlocrtne površine 70m2, ukupna površina zemljišta 180m2. Obnovljena 2017 god. nova stolarija, instalacije, ugrađeno podno grijanje. 20min vožnje od Zagreba.'
+          }
+          required
+        />
+      </div>
+    );
+  }
+
+  // STEP 5
+
+  if (step === STEPS.PRICE) {
     bodyContent = (
       <div className='flex flex-col gap-8'>
         <Heading
-          title='Opišite kako izgleda vaša nekretnina'
-          subtitle='Kratko i jasno'
+          title='Sada postavite traženu cijenu za vašu nekretninu.'
+          subtitle='Kolika je cijena vaše nekretnine po kvadratu?'
+        />
+        <Input
+          price
+          id='price'
+          label='Cijena'
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
         />
       </div>
     );

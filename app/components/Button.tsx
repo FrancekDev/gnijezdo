@@ -30,6 +30,7 @@ const Button: React.FC<ButtonProps> = ({
       className={`
             relative
             w-full
+            select-none
             rounded-lg
             text-bei
             transition

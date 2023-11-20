@@ -11,7 +11,7 @@ export interface ImageInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
-  ({ className, type, disabled, value, ...props }, ref) => {
+  ({ className, type, disabled, value, src, ...props }, ref) => {
     return (
       <div className='grid-row grid'>
         <div
@@ -30,36 +30,32 @@ const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
         >
           <input
             type={type}
-            className={twMerge(
-              `
-            hidden
-`,
-              disabled && 'opacity-75',
-              className
-            )}
+            className={twMerge(`hidden`, disabled && 'opacity-75', className)}
             disabled={disabled}
             ref={ref}
             {...props}
           />
           <label
             htmlFor='image'
-            className='flex h-8 w-full cursor-pointer items-center justify-center'
+            className='flex h-10 w-full cursor-pointer items-center justify-center'
           >
             Učitajte željene slike
           </label>
         </div>
-        {value && (
-          <div className='h-[160px] w-[320px]'>
+        {src ? (
+          <div className=' pt-6'>
             <AspectRatio.Root ratio={16 / 9}>
               {/*  TODO: promjeniti da map.images_src */}
               <Image
                 alt='slike nekretnine'
                 fill
                 style={{ objectFit: 'cover' }}
-                src={value}
+                src={src}
               />
             </AspectRatio.Root>
           </div>
+        ) : (
+          <p className='pt-5 text-center'>Molimo vas da učitate sliku.</p>
         )}
       </div>
     );
