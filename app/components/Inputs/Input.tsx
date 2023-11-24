@@ -10,7 +10,6 @@ interface InputProps {
   required?: boolean;
   register: UseFormRegister<FieldValues>;
   errors: FieldErrors;
-  price?: boolean;
   placeholder?: string;
   textarea?: boolean;
 }
@@ -18,50 +17,22 @@ interface InputProps {
 const Input: React.FC<InputProps> = ({
   id,
   label,
-  textarea,
-  placeholder,
-  price,
   disabled,
   required,
   register,
   errors,
+  placeholder,
+  textarea,
 }) => {
   return (
     <div className='relative w-full'>
-      {price ? (
-        <CurrencyInput
+      {textarea ? (
+        <textarea
           id={id}
-          placeholder='2,000.00 €'
-          decimalsLimit={2}
-          suffix=' €'
+          disabled={disabled}
           {...register(id, { required })}
+          placeholder={placeholder}
           className={`
-        peer
-        w-full
-        border-b
-        border-blu
-        bg-bei
-        p-1 
-        pt-6
-        font-light
-        outline-none
-        transition
-        placeholder:start-0
-        disabled:cursor-not-allowed
-        disabled:opacity-70
-        ${errors[id] ? 'border-del' : 'border-blu'}
-        ${errors[id] ? 'focus:border-del' : 'focus:border-[#3b5dadb4]'}
-      `}
-        />
-      ) : (
-        <>
-          {textarea ? (
-            <textarea
-              id={id}
-              disabled={disabled}
-              {...register(id, { required })}
-              placeholder={placeholder}
-              className={`
             peer
             left-4
             m-1
@@ -80,14 +51,14 @@ const Input: React.FC<InputProps> = ({
             ${errors[id] ? 'border-del' : 'border-blu'}
             ${errors[id] ? 'focus:border-del' : 'focus:border-secBlu'}
           `}
-            ></textarea>
-          ) : (
-            <input
-              id={id}
-              disabled={disabled}
-              {...register(id, { required })}
-              placeholder={placeholder}
-              className={`
+        ></textarea>
+      ) : (
+        <input
+          id={id}
+          disabled={disabled}
+          {...register(id, { required })}
+          placeholder={placeholder}
+          className={`
             peer
             w-full
             border-b
@@ -103,9 +74,7 @@ const Input: React.FC<InputProps> = ({
             ${errors[id] ? 'border-del' : 'border-blu'}
             ${errors[id] ? 'focus:border-del' : 'focus:border-secBlu'}
           `}
-            />
-          )}
-        </>
+        />
       )}
 
       <label

@@ -25,6 +25,7 @@ import LocationForm from '../Inputs/LoactionForm';
 import CategoryInputs from '../Inputs/CategoryInputs';
 import ImageInput from '../Inputs/ImageInput';
 import { categories } from '../Categories/Categories';
+import PriceInput from '../Inputs/PriceInput';
 
 enum STEPS {
   CATEGORY = 0,
@@ -51,7 +52,7 @@ const UploadModal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState<string>();
   const [step, setStep] = useState(STEPS.CATEGORY);
-  const user = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const supabaseClient = useSupabaseClient();
 
@@ -73,7 +74,7 @@ const UploadModal = () => {
       image_src: '',
       bathroom_count: 1,
       room_count: 1,
-      price: 1,
+      price: null,
     },
   });
 
@@ -144,6 +145,12 @@ const UploadModal = () => {
       return onNext();
     }
 
+    const imageFile = values.image_src;
+    const formatedLoaction = `POINT(${location[1]} ${location[0]})`;
+    let formatedstringPrice = values.price.replace('€', '').replace(',', '');
+    let formatedPrice = parseFloat(formatedstringPrice);
+    console.log(formatedPrice);
+
     try {
       setIsLoading(true);
 
@@ -151,9 +158,12 @@ const UploadModal = () => {
         !category ||
         !address ||
         !location ||
+        !values.description ||
+        !values.title ||
+        !image_src ||
         !bathroom_count ||
         !room_count ||
-        !image_src ||
+        !values.price ||
         !user
       ) {
         toast.error('Potrebno je popuniti sva polja!');
@@ -163,17 +173,49 @@ const UploadModal = () => {
       const uniqueID = uniqid();
 
       //upload images
-      const { data: ImageData, error: imageError } =
+      const { data: imageData, error: imageError } =
         await supabaseClient.storage
           .from('images')
-          .upload(`image-${values.title}-${uniqueID}`, image_src, {
+          .upload(`image-${values.title}-${uniqueID}`, imageFile, {
             cacheControl: '3600',
             upsert: false,
           });
+
+      if (imageError) {
+        setIsLoading(false);
+        return toast.error('Neuspjelo učitavnje slike!');
+      }
+      //data upload real-estate
+      const { error: supabaseError } = await supabaseClient
+        .from('real-estate')
+        .insert({
+          user_id: user.id,
+          title: values.title,
+          description: values.description,
+          image_src: imageData.path,
+          address: address,
+          location: formatedLoaction,
+          category: category,
+          room_count: room_count,
+          bathroom_count: bathroom_count,
+          price: formatedPrice,
+        });
+
+      if (supabaseError) {
+        setIsLoading(false);
+        return toast.error(`Supabase error -> ${supabaseError.message}`);
+      }
+
+      router.refresh();
+      setIsLoading(false);
+      reset();
+      setStep(STEPS.CATEGORY);
+      uploadModal.onClose();
     } catch (error) {
-      toast.error('Nešto je pošlo po krivu');
+      toast.error(`Nešto je pošlo po krivu! -> ${error}`);
     } finally {
       setIsLoading(false);
+      toast.success('Uspješno ste oglasili nekretninu!');
     }
   };
 
@@ -314,7 +356,7 @@ const UploadModal = () => {
           }}
           render={({ field: { value, onChange } }) => (
             <ImageInput
-              value={value} // Use field.value instead of image_src
+              value={value}
               src={image}
               placeholder='Učitajte željene slike'
               id='image'
@@ -331,7 +373,7 @@ const UploadModal = () => {
                   reader.readAsDataURL(file);
                 }
 
-                const newValue = event.target.value; // Assuming the value you want is the input value
+                const newValue = event.target.files?.[0];
                 onChange(newValue);
                 setCustomValue('image_src', newValue);
               }}
@@ -436,15 +478,34 @@ const UploadModal = () => {
           title='Kolika je ukupna cijena vaše nekretnine?'
           subtitle='Postavite traženu cijenu za vašu nekretninu.'
         />
-        <Input
-          price
+
+        <Controller
+          name='price'
+          control={control}
+          defaultValue={null}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { value, onChange } }) => (
+            <PriceInput
+              id='price'
+              label='Cijena'
+              disabled={isLoading}
+              register={register}
+              errors={errors}
+              required
+            />
+          )}
+        />
+        {/* <Input
+
           id='price'
           label='Cijena'
           disabled={isLoading}
           register={register}
           errors={errors}
           required
-        />
+        /> */}
       </div>
     );
   }
