@@ -3,8 +3,6 @@ import { twMerge } from 'tailwind-merge';
 
 import * as AspectRatio from '@radix-ui/react-aspect-ratio';
 
-import { FieldValues, UseFormRegister } from 'react-hook-form';
-
 import Image from 'next/image';
 
 export interface ImageInputProps

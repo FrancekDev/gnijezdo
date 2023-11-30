@@ -3,7 +3,7 @@
 import { FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form';
 import CurrencyInput from 'react-currency-input-field';
 
-interface PriceInputProps {
+interface NumberInputProps {
   id: string;
   label: string;
   disabled?: boolean;
@@ -15,7 +15,7 @@ interface PriceInputProps {
   formatedValue?: number;
 }
 
-const PriceInput: React.FC<PriceInputProps> = ({
+const NumberInput: React.FC<NumberInputProps> = ({
   id,
   label,
   disabled,
@@ -96,4 +96,4 @@ const PriceInput: React.FC<PriceInputProps> = ({
   );
 };
 
-export default PriceInput;
+export default NumberInput;

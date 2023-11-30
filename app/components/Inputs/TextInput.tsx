@@ -3,7 +3,7 @@
 import { FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form';
 import CurrencyInput from 'react-currency-input-field';
 
-interface InputProps {
+interface TextInputProps {
   id: string;
   label: string;
   disabled?: boolean;
@@ -14,7 +14,7 @@ interface InputProps {
   textarea?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({
+const TextInput: React.FC<TextInputProps> = ({
   id,
   label,
   disabled,
@@ -107,4 +107,4 @@ const Input: React.FC<InputProps> = ({
   );
 };
 
-export default Input;
+export default TextInput;

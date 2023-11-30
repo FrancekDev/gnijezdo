@@ -19,13 +19,13 @@ import { IoIosArrowDropdown } from 'react-icons/io';
 
 import ModalHelper from './ModalHelper';
 import Heading from '../Heading';
-import Input from '../Inputs/Input';
+import Input from '../Inputs/TextInput';
 import Counter from '../Inputs/Counter';
-import LocationForm from '../Inputs/LoactionForm';
+import LocationForm from '../Inputs/LocationInput';
 import CategoryInputs from '../Inputs/CategoryInputs';
 import ImageInput from '../Inputs/ImageInput';
 import { categories } from '../Categories/Categories';
-import PriceInput from '../Inputs/PriceInput';
+import PriceInput from '../Inputs/NumberInput';
 
 enum STEPS {
   CATEGORY = 0,
@@ -35,17 +35,6 @@ enum STEPS {
   INFO = 4,
   PRICE = 5,
 }
-
-// type FormData = {
-//   address: string;
-//   category: string;
-//   location: [number, number] | [null, null];
-//   price: number;
-//   description: string;
-//   image_src: string;
-//   bathroom_count: number;
-//   room_count: number;
-// };
 
 const UploadModal = () => {
   const uploadModal = useUploadModal();
@@ -209,17 +198,22 @@ const UploadModal = () => {
       router.refresh();
       setIsLoading(false);
       reset();
+      setImage('');
       setStep(STEPS.CATEGORY);
       uploadModal.onClose();
     } catch (error) {
-      toast.error(`Nešto je pošlo po krivu! -> ${error}`);
+      toast.error(`Nešto je pošlo po krivu!`);
     } finally {
       setIsLoading(false);
       toast.success('Uspješno ste oglasili nekretninu!');
     }
   };
 
-  // TODO: napraviti verifikaciju podataka i required...
+  // TODO: napraviti verifikaciju podataka i required,
+  // TODO: mogucnost uplodanja vise slika,
+  // TODO: staviti vise podataka: kvadratura, godina izgradnje...,
+  // TODO: mapu kod lokacije
+  // TODO: max MB za slike
 
   // STEP 0
 
@@ -263,7 +257,6 @@ const UploadModal = () => {
           subtitle='Pomozite potencijalnim kupcima da lociraju vašu nekretninu.'
         />
 
-        {/* //TODO: validacija podataka required */}
         <Controller
           name='location'
           control={control}
@@ -293,7 +286,6 @@ const UploadModal = () => {
         ) : (
           <></>
         )}
-        {/* // TODO: map */}
         {/* <Map small /> */}
       </div>
     );
@@ -363,6 +355,7 @@ const UploadModal = () => {
               type='file'
               disabled={isLoading}
               accept='image/*'
+              multiple
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 if (event?.target?.files?.[0]) {
                   const file = event.target.files[0];

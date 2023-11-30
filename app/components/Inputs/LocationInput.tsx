@@ -8,7 +8,7 @@ import * as Ariakit from '@ariakit/react';
 import { Autocomplete } from '@react-google-maps/api';
 import { ChangeEvent } from 'react';
 
-interface LocationFormProps {
+interface LocationInputProps {
   // TODO: promjeniti tip i possibly undefined error zbog ?
   onSelectAddress: (
     address: string,
@@ -17,7 +17,10 @@ interface LocationFormProps {
   defaultValue?: string;
 }
 
-const LocationForm = ({ onSelectAddress, defaultValue }: LocationFormProps) => {
+const LocationInput = ({
+  onSelectAddress,
+  defaultValue,
+}: LocationInputProps) => {
   const {
     ready,
     value,
@@ -89,4 +92,4 @@ const LocationForm = ({ onSelectAddress, defaultValue }: LocationFormProps) => {
   );
 };
 
-export default LocationForm;
+export default LocationInput;

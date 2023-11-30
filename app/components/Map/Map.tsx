@@ -14,7 +14,7 @@ import {
 
 import Distance from './Distance';
 import Categories from '../Categories/Categories';
-import SearchBox from '../Inputs/SearchBox';
+import SearchBox from './SearchBox';
 
 //Shorthands for
 type LatLngLiteral = google.maps.LatLngLiteral;
